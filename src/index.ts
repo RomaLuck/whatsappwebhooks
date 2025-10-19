@@ -40,8 +40,9 @@ app.post("/webhook", (req: Request, res: Response) => {
   if (!value || !value.messages || value.messages.length === 0) {
     res.sendStatus(400);
   }
-  const message = value.messages[0] ?? null;
-  const status = value.statuses[0] ?? null;
+
+  const message = value.messages ? value.messages[0] : null;
+  const status = value.statuses ? value.statuses[0] : null;
 
   if (status) {
     const statusId = status.id;
