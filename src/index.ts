@@ -19,7 +19,9 @@ app.get("/webhook", (req: Request, res: Response) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
-  console.log(req.query);
+  console.log(challenge);
+  console.log(token);
+  console.log(process.env.VERIFY_TOKEN);
   if (mode && token === process.env.VERIFY_TOKEN) {
     console.log(challenge);
     res.status(200).send(challenge);
