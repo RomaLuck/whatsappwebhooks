@@ -4,10 +4,12 @@ export type Image = {
 };
 
 export type Message = {
+	id: string;
 	type: string;
 	text?: {
 		body: string;
 	};
+	images?: Image[];
 	from: string;
 }
 

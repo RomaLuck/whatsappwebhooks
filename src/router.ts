@@ -1,10 +1,9 @@
-import {sendTextMessage} from "./services/messages-sender";
+import {replyMessage} from "./services/messages-sender";
 import serviceRouter from "./services/service-router";
+import {helloWorldHandler} from "./handlers/hello-world-handler";
 
-serviceRouter.onText('start', async (bot) => {
-	await sendTextMessage(bot.getMessage().from, "Hello, world!");
-});
+serviceRouter.onText('start', helloWorldHandler);
 
 serviceRouter.onText('help', async (bot) => {
-	await sendTextMessage(bot.getMessage().from, "Help");
+	await replyMessage(bot.getMessage().from, "Help", bot.getMessage().id);
 });
