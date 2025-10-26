@@ -47,8 +47,7 @@ export const process = async (
 	if (message) {
 		const bot = new Bot(message);
 		try {
-			serviceRouter.apply(bot);
-			await bot.run();
+			await bot.run(serviceRouter);
 		} catch (e) {
 			console.error("Bot processing failed:", e);
 		}

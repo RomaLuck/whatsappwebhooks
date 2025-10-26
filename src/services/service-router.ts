@@ -1,14 +1,13 @@
-import {Bot} from "./bot";
 import {Handler, TextMatcher} from "../types";
 
 export class ServiceRouter {
-	private textHandlers: { matcher: TextMatcher; handler: Handler }[] = [];
-	private commandHandlers: { command: string; handler: Handler }[] = [];
-	private imageHandlers: Handler[] = [];
-	private videoHandlers: Handler[] = [];
-	private audioHandlers: Handler[] = [];
-	private documentHandlers: Handler[] = [];
-	private fallbackHandler: Handler | null = null;
+	textHandlers: { matcher: TextMatcher; handler: Handler }[] = [];
+	commandHandlers: { command: string; handler: Handler }[] = [];
+	imageHandlers: Handler[] = [];
+	videoHandlers: Handler[] = [];
+	audioHandlers: Handler[] = [];
+	documentHandlers: Handler[] = [];
+	fallbackHandler: Handler | null = null;
 
 	public onText(matcher: TextMatcher, handler: Handler): this {
 		this.textHandlers.push({matcher, handler});
@@ -43,17 +42,6 @@ export class ServiceRouter {
 	public fallback(handler: Handler): this {
 		this.fallbackHandler = handler;
 		return this;
-	}
-
-	public apply(bot: Bot): Bot {
-		for (const {matcher, handler} of this.textHandlers) bot.onText(matcher, handler);
-		for (const {command, handler} of this.commandHandlers) bot.onCommand(command, handler);
-		for (const handler of this.imageHandlers) bot.onImage(handler);
-		for (const handler of this.videoHandlers) bot.onVideo(handler);
-		for (const handler of this.audioHandlers) bot.onAudio(handler);
-		for (const handler of this.documentHandlers) bot.onDocument(handler);
-		if (this.fallbackHandler) bot.fallback(this.fallbackHandler);
-		return bot;
 	}
 }
 
