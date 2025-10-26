@@ -1,7 +1,9 @@
 import serviceRouter from "./services/service-router";
 import {helloWorldHandler} from "./handlers/hello-world-handler";
 import {sendImageMessage, sendInteractiveMessage} from "./services/messages-sender";
-import {MessageTypes} from "./services/message-types";
+import {Button} from "./dto/button";
+import {ButtonAction} from "./dto/button-action";
+import {InteractiveButtonsReply} from "./dto/interactive-buttons-reply";
 
 serviceRouter.onText('start', helloWorldHandler);
 
@@ -13,31 +15,17 @@ serviceRouter.onText('help', async (bot) => {
 });
 
 serviceRouter.onCommand('start', async (bot) => {
+	const buttons = [];
+	buttons.push(new Button("start", "start"));
+	buttons.push(new Button("help", "help"));
+
+	const action = new ButtonAction(buttons);
+
 	await sendInteractiveMessage(
 		bot.getMessage().from,
-		{
-			type: MessageTypes.BUTTON.valueOf(),
-			body: {
-				text: "Hi"
-			},
-			action: {
-				buttons: [
-					{
-						type: MessageTypes.REPLY.valueOf(),
-						reply: {
-							id: "start",
-							title: "start"
-						}
-					},
-					{
-						type: MessageTypes.REPLY.valueOf(),
-						reply: {
-							id: "help",
-							title: "help"
-						}
-					},
-				]
-			}
-		}
+		new InteractiveButtonsReply(
+			action,
+			"Hi"
+		)
 	)
 })
