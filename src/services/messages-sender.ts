@@ -1,5 +1,6 @@
-import {Image} from "../types";
+import {Image, InteractiveList, InteractiveReplyButtons} from "../types";
 import {apiClient} from "./api-client";
+import {MessageTypes} from "./message-types";
 
 export const replyMessage = async (
 	to: string,
@@ -9,7 +10,7 @@ export const replyMessage = async (
 	await apiClient.post("/", {
 			messaging_product: "whatsapp",
 			to,
-			type: "text",
+			type: MessageTypes.TEXT.valueOf(),
 			text: {body},
 			context: {
 				message_id: messageId,
@@ -26,7 +27,7 @@ export const sendTextMessage = async (
 	await apiClient.post("/", {
 			messaging_product: "whatsapp",
 			to,
-			type: "text",
+			type: MessageTypes.TEXT.valueOf(),
 			text: {body},
 		},
 	);
@@ -40,11 +41,23 @@ export const sendImageMessage = async (
 	await apiClient.post("/", {
 		messaging_product: "whatsapp",
 		to,
-		type: "image",
+		type: MessageTypes.IMAGE.valueOf(),
 		image: {
 			link: image.link,
-			...(image.caption ? { caption: image.caption } : {}),
+			...(image.caption ? {caption: image.caption} : {}),
 		},
 	});
 	console.log(`Sending image to ${to}: ${image.link}${image.caption ? ` (caption: ${image.caption})` : ""}`);
+}
+
+export const sendInteractiveMessage = async (
+	to: string,
+	interactive: InteractiveReplyButtons | InteractiveList
+): Promise<void> => {
+	await apiClient.post("/", {
+		messaging_product: "whatsapp",
+		to,
+		type: MessageTypes.INTERACTIVE.valueOf(),
+		interactive
+	});
 }

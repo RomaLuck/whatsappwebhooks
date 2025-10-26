@@ -1,4 +1,5 @@
 import {Handler, Message, TextMatcher} from "../types";
+import {MessageTypes} from "./message-types";
 
 export class Bot {
 	private textHandlers: { matcher: TextMatcher; handler: Handler }[] = [];
@@ -16,7 +17,7 @@ export class Bot {
 		let handled = false;
 		const {type} = this.message;
 
-		if (type === "text" && this.message.text?.body) {
+		if (type === MessageTypes.TEXT.valueOf() && this.message.text?.body) {
 			const text = this.message.text.body;
 			if (text.startsWith("/")) {
 				const [cmd] = text.slice(1).trim().split(/\s+/);
@@ -27,42 +28,52 @@ export class Bot {
 					}
 				}
 			}
-
-			for (const {matcher, handler} of this.textHandlers) {
-				let match = false;
-				if (typeof matcher === "string") match = text === matcher;
-				else if (matcher instanceof RegExp) match = matcher.test(text);
-				else match = matcher(text, this);
-				if (match) {
-					await handler(this);
-					handled = true;
-				}
-			}
-		} else if (type === "image") {
+			handled = await this.handleText(text, handled);
+		} else if (type === MessageTypes.IMAGE.valueOf()) {
 			for (const h of this.imageHandlers) {
 				await h(this);
 				handled = true;
 			}
-		} else if (type === "video") {
+		} else if (type === MessageTypes.VIDEO.valueOf()) {
 			for (const h of this.videoHandlers) {
 				await h(this);
 				handled = true;
 			}
-		} else if (type === "audio") {
+		} else if (type === MessageTypes.AUDIO.valueOf()) {
 			for (const h of this.audioHandlers) {
 				await h(this);
 				handled = true;
 			}
-		} else if (type === "document") {
+		} else if (type === MessageTypes.DOCUMENT.valueOf()) {
 			for (const h of this.documentHandlers) {
 				await h(this);
 				handled = true;
+			}
+		} else if (type === MessageTypes.INTERACTIVE.valueOf()) {
+			const interactive = this.message.interactive;
+			if (interactive?.type === "button_reply" && interactive.button_reply?.id) {
+				const text = interactive.button_reply.id;
+				handled = await this.handleText(text, handled);
 			}
 		}
 
 		if (!handled && this.fallbackHandler) {
 			await this.fallbackHandler(this);
 		}
+	}
+
+	private async handleText(text: string, handled: boolean) {
+		for (const {matcher, handler} of this.textHandlers) {
+			let match = false;
+			if (typeof matcher === "string") match = text === matcher;
+			else if (matcher instanceof RegExp) match = matcher.test(text);
+			else match = matcher(text, this);
+			if (match) {
+				await handler(this);
+				handled = true;
+			}
+		}
+		return handled;
 	}
 
 	public getMessage(): Message {
