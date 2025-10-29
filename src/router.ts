@@ -1,6 +1,6 @@
 import serviceRouter from "./services/service-router";
 import {helloWorldHandler} from "./handlers/hello-world-handler";
-import {sendImageMessage, sendInteractiveMessage} from "./services/messages-sender";
+import {sendImageMessage, sendInteractiveMessage, sendTextMessage} from "./services/messages-sender";
 import {Button} from "./dto/button";
 import {ButtonAction} from "./dto/button-action";
 import {InteractiveButtonsReply} from "./dto/interactive-buttons-reply";
@@ -54,3 +54,7 @@ serviceRouter.onCommand('start', async (bot): Promise<void> => {
 		new InteractiveButtonsReply(action, "Hi")
 	)
 })
+
+serviceRouter.fallback(async (bot): Promise<void> => {
+	await sendTextMessage(bot.getMessage().from, "I don't understand your message");
+});
