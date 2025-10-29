@@ -1,6 +1,7 @@
-import {Image, InteractiveList, InteractiveReplyButtons} from "../types";
+import {Image} from "../types";
 import {apiClient} from "./api-client";
 import {MessageTypes} from "./message-types";
+import {IInteractive} from "../dto/i-interactive";
 
 export const replyMessage = async (
 	to: string,
@@ -52,7 +53,7 @@ export const sendImageMessage = async (
 
 export const sendInteractiveMessage = async (
 	to: string,
-	interactive: InteractiveReplyButtons | InteractiveList
+	interactive: IInteractive
 ): Promise<void> => {
 	await apiClient.post("/", {
 		messaging_product: "whatsapp",
