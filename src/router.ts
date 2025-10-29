@@ -1,6 +1,6 @@
 import serviceRouter from "./services/service-router";
 import {helloWorldHandler} from "./handlers/hello-world-handler";
-import {sendImageMessage, sendInteractiveMessage, sendTextMessage} from "./services/messages-sender";
+import {sendImageMessage, sendInteractiveMessage, sendTextMessage, showTyping} from "./services/messages-sender";
 import {Button} from "./dto/button";
 import {ButtonAction} from "./dto/button-action";
 import {InteractiveButtonsReply} from "./dto/interactive-buttons-reply";
@@ -11,6 +11,7 @@ import {InteractiveList} from "./dto/interactive-list";
 serviceRouter.onText('start', helloWorldHandler);
 
 serviceRouter.onText('help', async (bot): Promise<void> => {
+	await showTyping(bot.getMessage().id);
 	await sendImageMessage(bot.getMessage().from, {
 		link: "https://cdn.pixabay.com/photo/2022/02/25/10/51/dog-7033959_960_720.jpg",
 		caption: "Help",
@@ -53,6 +54,10 @@ serviceRouter.onCommand('start', async (bot): Promise<void> => {
 		bot.getMessage().from,
 		new InteractiveButtonsReply(action, "Hi")
 	)
+})
+
+serviceRouter.onImage(async (bot): Promise<void> => {
+	await sendTextMessage(bot.getMessage().from, "Wwooow! Image received");
 })
 
 serviceRouter.fallback(async (bot): Promise<void> => {

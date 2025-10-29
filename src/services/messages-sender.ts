@@ -3,6 +3,17 @@ import {apiClient} from "./api-client";
 import {MessageTypes} from "./message-types";
 import {IInteractive} from "../dto/i-interactive";
 
+export const showTyping = async (messageId: string): Promise<void> => {
+	await apiClient.post("/", {
+		messaging_product: "whatsapp",
+		status: "read",
+		message_id: messageId,
+		typing_indicator: {
+			"type": MessageTypes.TEXT.valueOf()
+		}
+	})
+}
+
 export const replyMessage = async (
 	to: string,
 	body: string,
